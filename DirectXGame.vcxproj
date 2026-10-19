@@ -163,7 +163,35 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABBco.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="DeathParticles.cpp" />
+    <ClCompile Include="Door.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GuardEffect.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
+    <ClCompile Include="Ladder.cpp" />
+    <ClCompile Include="M4.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapChipField.cpp" />
+    <ClCompile Include="MM.cpp" />
+    <ClCompile Include="PauseScene.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
+    <ClCompile Include="Randomize.cpp" />
+    <ClCompile Include="Rtt.cpp" />
+    <ClCompile Include="SceneChange.cpp" />
+    <ClCompile Include="ShieldEnemy.cpp" />
+    <ClCompile Include="Signboard.cpp" />
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="StageManager.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="V3M.cpp" />
+    <ClCompile Include="WM4.cpp" />
+    <ClCompile Include="WTU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
@@ -261,6 +289,37 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AABBco.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="DeathParticles.h" />
+    <ClInclude Include="Door.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Fade.h" />
+    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="GuardEffect.h" />
+    <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="Ladder.h" />
+    <ClInclude Include="M4.h" />
+    <ClInclude Include="MapChipField.h" />
+    <ClInclude Include="MM.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="PauseScene.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerBullet.h" />
+    <ClInclude Include="Randomize.h" />
+    <ClInclude Include="Rtt.h" />
+    <ClInclude Include="SceneChange.h" />
+    <ClInclude Include="ShieldEnemy.h" />
+    <ClInclude Include="Signboard.h" />
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="StageManager.h" />
+    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="V3M.h" />
+    <ClInclude Include="WM4.h" />
+    <ClInclude Include="WTU.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -16,10 +16,151 @@
     <Filter Include="シェーダー ファイル">
       <UniqueIdentifier>{718c7f4c-fc51-40ad-a221-b9456a7a1a3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\シーン切り替え">
+      <UniqueIdentifier>{d15846cd-24c0-4b85-b78a-928e3aa1c5d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\シーン切り替え">
+      <UniqueIdentifier>{7a396657-17b4-4f34-93d2-8b4b42146b82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMathファイル">
+      <UniqueIdentifier>{8629beb4-cada-44b9-a356-097af6049aed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMathファイル\3次元拡張">
+      <UniqueIdentifier>{84bf340d-2268-4496-b923-b26f888eafb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMathファイル\アフィン変換">
+      <UniqueIdentifier>{2f9666c1-e2a7-4941-ac70-53fd64699c78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMathファイル\回転">
+      <UniqueIdentifier>{371b2d03-2b06-48c8-99b8-1c81d91bbc41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMathファイル\拡大縮小">
+      <UniqueIdentifier>{66d56f01-68f8-4ee7-8607-2b98b3b3906c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="マップ">
+      <UniqueIdentifier>{ecf248ea-c66e-4d1b-9eea-5c20ae0b6b0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\演出関連">
+      <UniqueIdentifier>{7239fdda-6a33-4265-a12c-6c79f39691e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\演出関連\パーティクル">
+      <UniqueIdentifier>{8976c27f-10ba-47ae-a909-8e196435ee20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\演出関連">
+      <UniqueIdentifier>{821482c6-80b5-4748-adc9-52068ccd7118}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\演出関連\パーティクル">
+      <UniqueIdentifier>{d733c53a-a869-4460-92d4-51c182236ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\プレイヤー">
+      <UniqueIdentifier>{858a69fa-2b4e-4ff6-a1be-8732c7761281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\プレイヤー">
+      <UniqueIdentifier>{b37c773f-9df9-42aa-86e9-443f2f001336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\敵">
+      <UniqueIdentifier>{dbcfa630-83bf-4ff0-9cc1-6f8a899c7cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\敵">
+      <UniqueIdentifier>{b0aee46a-0eaa-42fa-a70e-6a0239731e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\エフェクト">
+      <UniqueIdentifier>{d2fc23bc-8e17-47b8-b657-e26349aa1da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\エフェクト">
+      <UniqueIdentifier>{f1b3e75e-7c33-4043-88b8-9471c21b5a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMathファイル\AABB">
+      <UniqueIdentifier>{48d8c58b-bb9c-4cf7-9a73-84596cc72d5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>ソース ファイル\シーン切り替え</Filter>
+    </ClCompile>
+    <ClCompile Include="M4.cpp">
+      <Filter>GameMathファイル\3次元拡張</Filter>
+    </ClCompile>
+    <ClCompile Include="V3M.cpp">
+      <Filter>GameMathファイル\3次元拡張</Filter>
+    </ClCompile>
+    <ClCompile Include="WM4.cpp">
+      <Filter>GameMathファイル\アフィン変換</Filter>
+    </ClCompile>
+    <ClCompile Include="Rtt.cpp">
+      <Filter>GameMathファイル\回転</Filter>
+    </ClCompile>
+    <ClCompile Include="MM.cpp">
+      <Filter>GameMathファイル\拡大縮小</Filter>
+    </ClCompile>
+    <ClCompile Include="WTU.cpp">
+      <Filter>GameMathファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MapChipField.cpp">
+      <Filter>マップ</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager.cpp">
+      <Filter>マップ</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>リソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Fade.cpp">
+      <Filter>ソース ファイル\演出関連</Filter>
+    </ClCompile>
+    <ClCompile Include="Easing.cpp">
+      <Filter>ソース ファイル\演出関連</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathParticles.cpp">
+      <Filter>ソース ファイル\演出関連\パーティクル</Filter>
+    </ClCompile>
+    <ClCompile Include="Door.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル\プレイヤー</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBullet.cpp">
+      <Filter>ソース ファイル\プレイヤー</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル\敵</Filter>
+    </ClCompile>
+    <ClCompile Include="ShieldEnemy.cpp">
+      <Filter>ソース ファイル\敵</Filter>
+    </ClCompile>
+    <ClCompile Include="HitEffect.cpp">
+      <Filter>ソース ファイル\エフェクト</Filter>
+    </ClCompile>
+    <ClCompile Include="Randomize.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GuardEffect.cpp">
+      <Filter>ソース ファイル\エフェクト</Filter>
+    </ClCompile>
+    <ClCompile Include="Signboard.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseScene.cpp">
+      <Filter>ソース ファイル\シーン切り替え</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneChange.cpp">
+      <Filter>ソース ファイル\シーン切り替え</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>ソース ファイル\シーン切り替え</Filter>
+    </ClCompile>
+    <ClCompile Include="Ladder.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="AABBco.cpp">
+      <Filter>GameMathファイル\AABB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,5 +211,94 @@
     <None Include="Resources\shaders\Terrain.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>ヘッダー ファイル\シーン切り替え</Filter>
+    </ClInclude>
+    <ClInclude Include="M4.h">
+      <Filter>GameMathファイル\3次元拡張</Filter>
+    </ClInclude>
+    <ClInclude Include="V3M.h">
+      <Filter>GameMathファイル\3次元拡張</Filter>
+    </ClInclude>
+    <ClInclude Include="WM4.h">
+      <Filter>GameMathファイル\アフィン変換</Filter>
+    </ClInclude>
+    <ClInclude Include="Rtt.h">
+      <Filter>GameMathファイル\回転</Filter>
+    </ClInclude>
+    <ClInclude Include="MM.h">
+      <Filter>GameMathファイル\拡大縮小</Filter>
+    </ClInclude>
+    <ClInclude Include="WTU.h">
+      <Filter>GameMathファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MapChipField.h">
+      <Filter>マップ</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StageManager.h">
+      <Filter>マップ</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Fade.h">
+      <Filter>ヘッダー ファイル\演出関連</Filter>
+    </ClInclude>
+    <ClInclude Include="Easing.h">
+      <Filter>ヘッダー ファイル\演出関連</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathParticles.h">
+      <Filter>ヘッダー ファイル\演出関連\パーティクル</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ヘッダー ファイル\プレイヤー</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBullet.h">
+      <Filter>ヘッダー ファイル\プレイヤー</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル\敵</Filter>
+    </ClInclude>
+    <ClInclude Include="ShieldEnemy.h">
+      <Filter>ヘッダー ファイル\敵</Filter>
+    </ClInclude>
+    <ClInclude Include="HitEffect.h">
+      <Filter>ヘッダー ファイル\エフェクト</Filter>
+    </ClInclude>
+    <ClInclude Include="Randomize.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GuardEffect.h">
+      <Filter>ヘッダー ファイル\エフェクト</Filter>
+    </ClInclude>
+    <ClInclude Include="Signboard.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PauseScene.h">
+      <Filter>ヘッダー ファイル\シーン切り替え</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>ヘッダー ファイル\シーン切り替え</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneChange.h">
+      <Filter>ヘッダー ファイル\シーン切り替え</Filter>
+    </ClInclude>
+    <ClInclude Include="Ladder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBco.h">
+      <Filter>GameMathファイル\AABB</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
