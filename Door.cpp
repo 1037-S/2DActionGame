@@ -1,29 +1,29 @@
 #include "Door.h"
 
-using namespace KamataEngine;
+AABB Door::GetAABB() {
+	Vector3 worldPos = worldTransform_.translation_;
+	AABB aabb;
 
-void Door::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, uint8_t targetStageIndex) {
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+	;
+}
+
+void Door::Initialize(Model* model, const Vector3& position, uint8_t doorID, uint8_t pairID) {
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 	model_ = model;
-	targetStageIndex_ = targetStageIndex;
+	doorID_ = doorID;
+	pairID_ = pairID;
 	isEntered_ = false;
 }
 
 void Door::Update(const Vector3& playerPos) {
+	(void)playerPos;
 	wtu_.WorldTransformUpdate(worldTransform_);
 
-	// プレイヤーとの距離計算 (球判定)
-	Vector3 diff = {worldTransform_.translation_.x - playerPos.x, worldTransform_.translation_.y - playerPos.y, worldTransform_.translation_.z - playerPos.z};
-	float distanceSq = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
-
-	// 距離内で上キー(Wキー)を押したらドアに入る
-	if (distanceSq <= interactRadius_ * interactRadius_) {
-		Input* input = Input::GetInstance();
-		if (input->TriggerKey(DIK_UP)) {
-			isEntered_ = true;
-		}
-	}
 }
 
 void Door::Draw(const Camera& camera) {

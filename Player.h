@@ -130,7 +130,7 @@ public:
 	// 描画
 	void Draw();
 
-	void SetLife(int32_t life) { life_ = life; }
+	void SetLife(int32_t life) { kLife_ = life; }
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
@@ -143,6 +143,17 @@ public:
 			ladder_ = nullptr;
 		}
 	};
+
+	// 接地状態を設定する関数
+	void SetOnGround(bool onGround) { onGround_ = onGround; }
+
+	// X軸・Y軸の速度を設定/リセットする関数
+	void SetVelocityX(float vx) { velocity_.x = vx; }
+	void SetVelocityY(float vy) { velocity_.y = vy; }
+
+	// サイズ定数のゲッター
+	static float GetWidth() { return kWidth; }
+	static float GetHeight() { return kHeight; }
 
 	void ResetShotRequest() { isShotRequested_ = false; }
 
@@ -158,9 +169,12 @@ public:
 
 	bool GetIsDead() const { return isDead_; }
 
-	int32_t GetLife() const { return life_; }
+	int32_t GetLife() const { return kLife_; }
 
 	bool IsShotRequested() const { return isShotRequested_; }
+
+	bool HasKey() const { return hasKey_; }
+	void SetHasKey(bool hasKey) { hasKey_ = hasKey; }
 
 private:
 	// 梯子
@@ -285,6 +299,14 @@ private:
 	// 発射リクエスト
 	bool isShotRequested_ = false;
 
+	bool hasKey_ = false; // 鍵の所持フラグ
+
 	// 初期残機
-	int32_t life_ = 3;
+	int32_t kLife_ = 3;
+
+	// 最大残機
+	int32_t kMaxLife_ = 99;
+
+	// SEの音声データ用ハンドル
+	uint32_t jumpSEHandle_ = 0;
 };

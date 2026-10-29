@@ -1,8 +1,10 @@
 #include "SceneChange.h"
 
 SceneChange::~SceneChange() { 
-	delete titleScene; 
-	delete gameScene; 
+	delete titleScene;
+	delete stageSelect; 
+	delete gameScene;
+	delete stageManager; 
 }
 
 void SceneChange::LoadDebugSettings() {}
@@ -30,17 +32,17 @@ void SceneChange::ChangeScene() {
 		}
 
 		break;
-		// case Scene::kStageSelect:
-		//	if (stageSelect->IsSelected())
-		//	{
-		//		scene = Scene::kGeme;
-		//		delete stageSelect;
-		//		stageSelect = nullptr;
+		 case Scene::kStageSelect:
+			if (stageSelect->IsSelected())
+			{
+				scene = Scene::kGeme;
+				delete stageSelect;
+				stageSelect = nullptr;
 
-		//		gameScene = new GameScene();
-		//		gameScene->Initialize(stageManager);
-		//	}
-		//	break;
+				gameScene = new GameScene();
+				gameScene->Initialize(stageManager);
+			}
+			break;
 
 	case Scene::kGeme:
 		if (gameScene->IsFinshed()) {
@@ -97,9 +99,9 @@ void SceneChange::Update() {
 		titleScene->Update();
 
 		break;
-	// case Scene::kStageSelect:
-	//	if (stageSelect) stageSelect->Update();
-	//	break;
+	 case Scene::kStageSelect:
+		if (stageSelect) stageSelect->Update();
+		break;
 	case Scene::kGeme:
 		gameScene->Update();
 
@@ -114,9 +116,9 @@ switch (scene) {
 	case Scene::kTitle:
 		titleScene->Draw();
 		break;
-	// case Scene::kStageSelect:
-	//	if (stageSelect) stageSelect->Draw();
-	//	break;
+	 case Scene::kStageSelect:
+		if (stageSelect) stageSelect->Draw();
+		break;
 	case Scene::kGeme:
 		gameScene->Draw();
 		break;

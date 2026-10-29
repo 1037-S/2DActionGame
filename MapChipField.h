@@ -3,14 +3,18 @@
 #include <vector>
 
 enum class MapchipType {
-	kBlank,     // 空白
-	kBlock,     // ブロック
-	kPlayer,    // プレイヤー
-	kSignboard, // 看板
-	kLadder,	// 梯子
-	kDoor,      // ドア
-	kGoal,      // ステージクリア
-	kEnemy,     // 敵
+	kBlank,			// 空白
+	kBlock,			// ブロック
+	kPlayer,		// プレイヤー
+	kSignboard,		// 看板
+	kLadder,		// 梯子
+	kDoor,			// ドア
+	kKeyLockDoor,	// 鍵付き扉
+	kKey,			// 鍵
+	kSwitchDoor,	// スイッチで開く扉
+	kSwitch,		// スイッチ
+	kGoal,			// ステージクリア
+	kEnemy,			// 敵
 };
 
 struct IndexSet {
@@ -70,5 +74,5 @@ private:
 
 	// ブロックの個数
 	static inline const uint32_t kNumBlockVirtical_ = 20;
-	static inline const uint32_t kNumBlockHorizontal_ = 100;
+	static inline const uint32_t kNumBlockHorizontal_ = 500;
 };

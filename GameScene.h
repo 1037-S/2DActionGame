@@ -11,6 +11,10 @@
 #include "Enemy.h"
 #include "ShieldEnemy.h"
 #include "Skydome.h"
+#include "Key.h"
+#include "KeyDoor.h"
+#include "Button.h"
+#include "ButtonDoor.h"
 #include <vector>
 #include "Fade.h"
 #include "HitEffect.h"
@@ -186,10 +190,23 @@ private:
 	uint32_t numberTextureHandles_[10] = {};
 	Sprite* numberSprites_[10] = {};
 
-	//Model* doorModel_ = nullptr;
-	//std::vector<Door*> doors_;
-	//int32_t nextStageIndex_ = -1;
+	Model* doorModel_ = nullptr;
+	std::vector<Door*> doors_;
+	int32_t nextStageIndex_ = -1;
+
+	// 鍵・鍵ドアモデル
+	Model* keyModel_ = nullptr;
+	Model* keyDoorModel_ = nullptr;
+
+	std::list<Key*> keys_;
+	std::list<KeyDoor*> keyDoors_;
 	
+	Model* buttonModel_ = nullptr;
+	Model* buttonDoorModel_ = nullptr;
+
+	std::list<Button*> buttons_;
+	std::list<ButtonDoor*> buttonDoors_;
+
 	// 梯子ギミック
 	Model* ladderModel_ = nullptr;
 	std::list<Ladder*> ladders_;
@@ -210,4 +227,9 @@ private:
 
 	// 残機減少時のリスポーン用フェードアウト判定フラグ
 	bool isRespawnFadeOut_ = false; 
+
+	// 音声のデータ自体のハンドル
+	uint32_t bgmDataHandle_ = 0;
+	// 再生中トラックのハンドル
+	uint32_t bgmVoiceHandle_ = 0;
 };

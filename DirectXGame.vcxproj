@@ -164,6 +164,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AABBco.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonDoor.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="DeathParticles.cpp" />
     <ClCompile Include="Door.cpp" />
@@ -173,6 +175,8 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GuardEffect.cpp" />
     <ClCompile Include="HitEffect.cpp" />
+    <ClCompile Include="Key.cpp" />
+    <ClCompile Include="KeyDoor.cpp" />
     <ClCompile Include="Ladder.cpp" />
     <ClCompile Include="M4.cpp" />
     <ClCompile Include="main.cpp" />
@@ -188,6 +192,7 @@
     <ClCompile Include="Signboard.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="StageManager.cpp" />
+    <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="V3M.cpp" />
     <ClCompile Include="WM4.cpp" />
@@ -292,6 +297,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABBco.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonDoor.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="DeathParticles.h" />
     <ClInclude Include="Door.h" />
@@ -301,6 +308,8 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GuardEffect.h" />
     <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="Key.h" />
+    <ClInclude Include="KeyDoor.h" />
     <ClInclude Include="Ladder.h" />
     <ClInclude Include="M4.h" />
     <ClInclude Include="MapChipField.h" />
@@ -316,6 +325,7 @@
     <ClInclude Include="Signboard.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="StageManager.h" />
+    <ClInclude Include="StageSelect.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="V3M.h" />
     <ClInclude Include="WM4.h" />

@@ -6,14 +6,18 @@
 using namespace KamataEngine;
 
 namespace {
-std::map<char, MapchipType> mapChipTypeTable = {
-    {'B', MapchipType::kBlock    },
-    {'P', MapchipType::kPlayer   },
-    {'G', MapchipType::kGoal     },
-    {'T', MapchipType::kSignboard},
-    {'L', MapchipType::kLadder   },
-    {'D', MapchipType::kDoor     },
-    {'E', MapchipType::kEnemy    },
+std::map<std::string, MapchipType> mapChipTypeTable = {
+    {"B",  MapchipType::kBlock      },
+    {"P",  MapchipType::kPlayer     },
+    {"G",  MapchipType::kGoal       },
+    {"T",  MapchipType::kSignboard  },
+    {"L",  MapchipType::kLadder     },
+    {"D",  MapchipType::kDoor       },
+    {"KD", MapchipType::kKeyLockDoor},
+    {"K",  MapchipType::kKey        },
+    {"SD", MapchipType::kSwitchDoor },
+    {"SW", MapchipType::kSwitch     },
+    {"E",  MapchipType::kEnemy      },
 };
 }
 
@@ -63,22 +67,44 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 				continue;
 			}
 
-			// 先頭文字がいずれかのマップチップ種別に該当数か確認
-			if (!mapChipTypeTable.contains(word[kChipType])) {
-				continue;
-			}
+			std::string chipTypeStr = "";
+			uint8_t subID = 0;
 
-			// 先頭文字でマップチップのタイプを判別
-			mapChipData_.data[i][j].type = mapChipTypeTable[word[kChipType]];
+			//// 先頭文字がいずれかのマップチップ種別に該当数か確認
+			// if (!mapChipTypeTable.contains(word[kChipType])) {
+			//	continue;
+			// }
 
-			// サブIDを含まない場合はスキップする(0番で固定)
-			if (word.size() <= kChipSubID) {
-				mapChipData_.data[i][j].subID = 0;
-				continue;
-			}
+			//// 先頭文字でマップチップのタイプを判別
+			// mapChipData_.data[i][j].type = mapChipTypeTable[word[kChipType]];
+
+			//// サブIDを含まない場合はスキップする(0番で固定)
+			// if (word.size() <= kChipSubID) {
+			//	mapChipData_.data[i][j].subID = 0;
+			//	continue;
+			// }
 
 			// サブIDを設定
-			mapChipData_.data[i][j].subID = static_cast<uint8_t>(word[kChipSubID] - '0');
+			// mapChipData_.data[i][j].subID = static_cast<uint8_t>(word[kChipSubID] - '0');
+
+			// 文字列内の数字以外の部分（英字）を抽出
+			size_t numPos = word.find_first_of("0123456789");
+			if (numPos != std::string::npos) {
+				chipTypeStr = word.substr(0, numPos);
+				// 数字部分をサブIDとして取得
+				subID = static_cast<uint8_t>(std::stoi(word.substr(numPos)));
+			} else {
+				chipTypeStr = word; // 数字がない場合は全体を識別子とする
+			}
+
+			// 2. テーブル内に定義された識別子か確認
+			if (!mapChipTypeTable.contains(chipTypeStr)) {
+				continue;
+			}
+
+			// 3. データにセットする
+			mapChipData_.data[i][j].type = mapChipTypeTable[chipTypeStr];
+			mapChipData_.data[i][j].subID = subID;
 		}
 	}
 }

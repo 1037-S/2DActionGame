@@ -162,6 +162,21 @@
     <ClCompile Include="AABBco.cpp">
       <Filter>GameMathファイル\AABB</Filter>
     </ClCompile>
+    <ClCompile Include="Key.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyDoor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelect.cpp">
+      <Filter>ソース ファイル\シーン切り替え</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonDoor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\SpritePS.hlsl">
@@ -299,6 +314,21 @@
     </ClInclude>
     <ClInclude Include="AABBco.h">
       <Filter>GameMathファイル\AABB</Filter>
+    </ClInclude>
+    <ClInclude Include="Key.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyDoor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelect.h">
+      <Filter>ヘッダー ファイル\シーン切り替え</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonDoor.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

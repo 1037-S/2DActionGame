@@ -63,13 +63,23 @@ GameScene::~GameScene() {
 	ladders_.clear();
 	delete ladderModel_;
 
-	// delete doorModel_;
-	// for (Door* door : doors_) {
-	//	delete door;
-	// }
-	// doors_.clear();
+	delete doorModel_;
+	for (Door* door : doors_) {
+		delete door;
+	}
+	doors_.clear();
 	worldTransformBlocks_.clear();
+	delete buttonModel_;
+	for (Button* button : buttons_) {
+		delete button;
+	}
+	buttons_.clear();
 
+	delete buttonDoorModel_;
+	for (ButtonDoor* buttonDoor : buttonDoors_) {
+		delete buttonDoor;
+	}
+	buttonDoors_.clear();
 	// カメラの解放
 	delete playerModel_;
 	delete enemyModel_;
@@ -138,6 +148,39 @@ void GameScene::CheckAllCollitions() {
 				// ※ Playerクラスに ShieldEnemy 用の OnCollision オーバーロードが
 				player_->OnCollision(shieldEnemy);
 				shieldEnemy->OnCollision(player_);
+			}
+		}
+	}
+#pragma endregion
+
+#pragma region プレイヤーと扉の当たり判定
+
+	if (player_) {
+		AABB playerAABB = player_->GetAABB(); // プレイヤーのAABBを取得
+
+		for (Door* door : doors_) {
+			door->Update(player_->GetWorldPosition());
+
+			// プレイヤーとドアの AABB が交差しているかチェック
+			if (aabb_.IsCollision(playerAABB, door->GetAABB())) {
+
+				// 重なっている状態で「上キー」が押されたらワープ発動
+				Input* input = Input::GetInstance();
+				if (input->TriggerKey(DIK_UP)) {
+					uint8_t pairID = door->GetPairID();
+
+					// ペアとなる移動先のドアを探索
+					for (Door* targetDoor : doors_) {
+						if (targetDoor->GetDoorID() == pairID) {
+							// 移動先ドアの位置にプレイヤーを移動
+							player_->GetWorldTransform().translation_ = targetDoor->GetPosition();
+
+							PlayerCamera_->Reset();
+							break;
+						}
+					}
+					break;
+				}
 			}
 		}
 	}
@@ -266,6 +309,163 @@ void GameScene::CheckAllCollitions() {
 		player_->SetTouchingLadder(isTouching, touchedLadder);
 	}
 #pragma endregion
+
+#pragma region プレイヤーと鍵の当たり判定
+	if (player_) {
+		AABB playerAABB = player_->GetAABB();
+
+		for (Key* key : keys_) {
+			if (key->IsGot())
+				continue;
+
+			// プレイヤーが鍵に触れたら取得
+			if (aabb_.IsCollision(playerAABB, key->GetAABB())) {
+				key->SetIsGot(true);
+				player_->SetHasKey(true); // 鍵を所持状態にする[cite: 37, 38]
+				break;
+			}
+		}
+	}
+#pragma endregion
+
+#pragma region プレイヤーと鍵ドアの当たり判定
+	if (player_) {
+		AABB playerAABB = player_->GetAABB();
+
+		for (KeyDoor* keyDoor : keyDoors_) {
+
+			// 鍵ドアに接触しているかチェック[cite: 49]
+			if (aabb_.IsCollision(playerAABB, keyDoor->GetAABB())) {
+
+				Input* input = Input::GetInstance();
+				// 上キーが押され、かつ (すでに開いている OR 鍵を持っている) 場合に動作[cite: 49]
+				if (input->TriggerKey(DIK_UP) && (keyDoor->IsOpened() || player_->HasKey())) {
+
+					// まだ開いていない場合は開錠＆鍵消費[cite: 49]
+					if (!keyDoor->IsOpened()) {
+						keyDoor->Open();
+						player_->SetHasKey(false);
+					}
+
+					// ペアとなる移動先の鍵ドアを探索[cite: 49, 58]
+					uint8_t pairID = keyDoor->GetPairID();
+					for (KeyDoor* targetDoor : keyDoors_) {
+						if (targetDoor->GetDoorID() == pairID) {
+							// プレイヤーの位置を移動先の鍵ドアの座標に変更[cite: 49, 58]
+							player_->GetWorldTransform().translation_ = targetDoor->GetPosition();
+
+							// プレイヤーの行列を即座に確定してカメラを追従させる[cite: 49]
+							player_->GetWorldTransform();
+							PlayerCamera_->SetTarget(player_);
+							PlayerCamera_->Reset();
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+#pragma endregion player_->SetHasKey(false); // 鍵を消費する
+
+#pragma region プレイヤーとボタンの当たり判定（押し戻し＆上からの踏み判定）
+	if (player_) {
+		AABB playerAABB = player_->GetAABB(); // プレイヤーのAABB
+		Vector3 playerPos = player_->GetWorldPosition();
+		Vector3 playerVel = player_->GetVelocity();
+
+		for (Button* button : buttons_) {
+			AABB buttonAABB = button->GetAABB();
+
+			// AABB同士が交差しているかチェック
+			if (aabb_.IsCollision(playerAABB, buttonAABB)) {
+
+				Vector3 buttonPos = button->GetPosition();
+
+				// 重なり量の計算（プレイヤーのサイズ ＋ ボタンのサイズ）
+				float overlapX = (player_->GetWidth() / 2.0f + button->GetWidth() / 2.0f) - fabsf(playerPos.x - buttonPos.x);
+				float overlapY = (player_->GetHeight() / 2.0f + button->GetHeight() / 2.0f) - fabsf(playerPos.y - buttonPos.y);
+
+				// --- 1. 上から乗った（踏んだ）判定 ---
+				// プレイヤーが下降中（vel.y <= 0）かつ、足元がボタンの上面付近にある場合
+				if (playerVel.y <= 0.0f && (playerPos.y - player_->GetHeight() / 2.0f) >= (buttonPos.y + button->GetHeight() / 2.0f - 0.2f)) {
+
+					button->Press(); // ボタン起動
+
+					// プレイヤーをボタンの上面に着地させる
+					player_->GetWorldTransform().translation_.y = buttonPos.y + (button->GetHeight() / 2.0f) + (player_->GetHeight() / 2.0f);
+
+					// 物理状態の更新（落下速度クリア ＆ 着地状態に切り替え）
+					player_->SetVelocityY(0.0f);
+					player_->SetOnGround(true);
+					player_->GetWorldTransform();
+				}
+				// --- 2. 左右横からの接触判定（通過させず押し戻す） ---
+				else if (overlapX < overlapY) {
+					// プレイヤーがボタンの左側にいる場合（右へ進もうとしたのを左へ押し戻す）
+					if (playerPos.x < buttonPos.x) {
+						player_->GetWorldTransform().translation_.x -= overlapX;
+						if (playerVel.x > 0.0f) {
+							player_->SetVelocityX(0.0f); // 右方向への速度をリセット
+						}
+					}
+					// プレイヤーがボタンの右側にいる場合（左へ進もうとしたのを右へ押し戻す）
+					else {
+						player_->GetWorldTransform().translation_.x += overlapX;
+						if (playerVel.x < 0.0f) {
+							player_->SetVelocityX(0.0f); // 左方向への速度をリセット
+						}
+					}
+					player_->GetWorldTransform();
+				}
+			}
+		}
+	}
+#pragma endregion
+
+#pragma region プレイヤーとボタンドアの当たり判定
+	if (player_) {
+		AABB playerAABB = player_->GetAABB();
+
+		for (ButtonDoor* buttonDoor : buttonDoors_) {
+			if (aabb_.IsCollision(playerAABB, buttonDoor->GetAABB())) {
+
+				// ドアに対応するボタンが押されているか判定
+				bool isButtonActive = false;
+				for (Button* button : buttons_) {
+					if (button->GetButtonID() == buttonDoor->GetButtonID() && button->IsPressed()) {
+						isButtonActive = true;
+						break;
+					}
+				}
+
+				Input* input = Input::GetInstance();
+				// ボタンが起動済み（または開錠済み）で上キーを押した場合にワープ
+				if (input->TriggerKey(DIK_UP) && (buttonDoor->IsOpened() || isButtonActive)) {
+
+					if (!buttonDoor->IsOpened()) {
+						buttonDoor->Open(); // 開錠
+					}
+
+					// ペアとなる移動先のボタンドアを探索してワープ
+					uint8_t pairID = buttonDoor->GetPairID();
+					for (ButtonDoor* targetDoor : buttonDoors_) {
+						if (targetDoor->GetDoorID() == pairID) {
+							player_->GetWorldTransform().translation_ = targetDoor->GetPosition();
+
+							// 行列の即時更新とカメラのリセット
+							player_->GetWorldTransform();
+							PlayerCamera_->SetTarget(player_);
+							PlayerCamera_->Reset();
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+#pragma endregion
 }
 
 void GameScene::GenerateFieldObjects() {
@@ -285,11 +485,11 @@ void GameScene::GenerateFieldObjects() {
 	// ブロックの生成
 	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
 		for (uint32_t j = 0; j < kNumBlockHorizontal; ++j) {
-			//if (i == 11 && j == 12) {
+			// if (i == 11 && j == 12) {
 			//	int aaa = 10;
 			//	(void)aaa;
 			//
-			//}
+			// }
 			MapchipType mapchipType = mapChipField_->GetMapchipTypeByIndex(j, i);
 
 			switch (mapchipType) {
@@ -336,51 +536,81 @@ void GameScene::GenerateFieldObjects() {
 				break;
 			}
 
-			case MapchipType::kSignboard: {
-				Signboard* newSignboard = new Signboard();
-				Vector3 signboardPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+			case MapchipType::kLadder: {
+				// uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
+				Ladder* newladder = new Ladder();
+				Vector3 ladderPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+				newladder->Initialize(ladderModel_, &camera_, ladderPos);
+				ladders_.push_back(newladder);
+				// switch (subID) {
 
-				signboardPos.z += 0.5f;
-
-				std::string message = "";
-
-				// サブIDに応じたメッセージを設定
-				int8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
-				std::string texturePath = "UI/signboard_msg_" + std::to_string(subID) + ".png";
-				uint32_t textTextureHandle = TextureManager::Load(texturePath);
-
-				newSignboard->Initialize(signboardModel_, &camera_, signboardPos, textTextureHandle);
-				signboards_.push_back(newSignboard);
+				// case 0: {
+				//	break;
+				// }
+				// default:
+				//	break;
+				// }
 				break;
 			}
 
-			case MapchipType::kLadder: {
-				//uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
-				Ladder* newladder = new Ladder();
-				Vector3 ladderPos = mapChipField_->GetMapchipPostionByIndex(j, i);
-					newladder->Initialize(ladderModel_, &camera_, ladderPos);
-					ladders_.push_back(newladder);
-				//switch (subID) {
+			case MapchipType::kDoor: {
+				Door* newDoor = new Door();
+				Vector3 doorPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+				uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i); // サブIDを移動先のステージ番号にする
 
-				//case 0: {
-				//	break;
-				//}
-				//default:
-				//	break;
-				//}
-				    break;
-			} 
+				// 例: subID 0 (D0) -> pairID 1 (D1) / subID 1 (D1) -> pairID 0 (D0)
+				uint8_t doorID = subID;
+				uint8_t pairID = (subID % 2 == 0) ? (subID + 1) : (subID - 1);
 
-			// case MapchipType::kDoor:
-			//{
-			//	Door* newDoor = new Door();
-			//	Vector3 doorPos = mapChipField_->GetMapchipPostionByIndex(j, i);
-			//	uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i); // サブIDを移動先のステージ番号にする
+				newDoor->Initialize(doorModel_, doorPos, doorID, pairID);
+				doors_.push_back(newDoor);
+				break;
+			}
+			case MapchipType::kKey: {
+				Key* newKey = new Key();
+				Vector3 keyPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+				newKey->Initialize(keyModel_, &camera_, keyPos);
+				keys_.push_back(newKey);
+				break;
+			}
 
-			//	newDoor->Initialize(doorModel_, doorPos, subID);
-			//	doors_.push_back(newDoor);
-			//	break;
-			//}
+			case MapchipType::kKeyLockDoor: {
+				KeyDoor* newKeyDoor = new KeyDoor();
+				Vector3 keyDoorPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+
+				uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
+
+				// サブIDを利用してペアを決定 (例: subID 0 -> pairID 1 / subID 1 -> pairID 0)
+				uint8_t doorID = subID;
+				uint8_t pairID = (subID % 2 == 0) ? (subID + 1) : (subID - 1);
+
+				newKeyDoor->Initialize(keyDoorModel_, &camera_, keyDoorPos, doorID, pairID);
+				keyDoors_.push_back(newKeyDoor);
+				break;
+			}
+			case MapchipType::kSwitch: { // スイッチ/ボタン
+				Button* newButton = new Button();
+				Vector3 buttonPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+				uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
+
+				newButton->Initialize(buttonModel_, &camera_, buttonPos, subID);
+				buttons_.push_back(newButton);
+				break;
+			}
+
+			case MapchipType::kSwitchDoor: { // スイッチ/ボタンドア
+				ButtonDoor* newButtonDoor = new ButtonDoor();
+				Vector3 buttonDoorPos = mapChipField_->GetMapchipPostionByIndex(j, i);
+				uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
+
+				uint8_t doorID = subID;
+				uint8_t pairID = (subID % 2 == 0) ? (subID + 1) : (subID - 1);
+				uint8_t buttonID = subID; // 例: 同じサブIDのボタンに対応
+
+				newButtonDoor->Initialize(buttonDoorModel_, &camera_, buttonDoorPos, doorID, pairID, buttonID);
+				buttonDoors_.push_back(newButtonDoor);
+				break;
+			}
 			case MapchipType::kEnemy: {
 				uint8_t subID = mapChipField_->GetMapchipSubIDByIndex(j, i);
 				switch (subID) {
@@ -419,6 +649,49 @@ void GameScene::GenerateFieldObjects() {
 
 void GameScene::PlayPhase() {
 	skydome_->Update();
+
+	for (Key* key : keys_) {
+		key->Update();
+	}
+
+	// 鍵ドアの更新[cite: 39]
+	for (KeyDoor* keyDoor : keyDoors_) {
+		keyDoor->Update();
+	}
+	for (Button* button : buttons_) {
+		button->Update();
+	}
+
+	for (ButtonDoor* buttonDoor : buttonDoors_) {
+		buttonDoor->Update();
+	}
+	// ドアの更新および移動処理
+	for (Door* door : doors_) {
+		door->Update(player_->GetWorldPosition());
+
+		if (door->IsEntered()) {
+			uint8_t pairID = door->GetPairID();
+
+			// ペアとなるドアを探す
+			for (Door* targetDoor : doors_) {
+				if (targetDoor->GetDoorID() == pairID) {
+					// プレイヤーの位置を移動先のドアの位置に変更
+					Vector3 targetPos = targetDoor->GetPosition();
+
+					// 必要に応じてPlayerクラスに位置設定用関数（SetPositionなど）を追加して呼び出す
+					player_->GetWorldTransform().translation_ = targetPos;
+
+					// カメラの位置も再計算・追従リセットを行う
+					PlayerCamera_->SetTarget(player_); // 最新のプレイヤーポインタをセット
+					PlayerCamera_->Reset();
+					break;
+				}
+			}
+
+			// 進入フラグをリセットして連続ワープを防ぐ
+			door->ResetEntered();
+		}
+	}
 	// 梯子の更新
 	for (Ladder* ladder : ladders_) {
 		ladder->Update();
@@ -475,6 +748,7 @@ void GameScene::PlayPhase() {
 		camera_.UpdateMatrix();
 	}
 #endif // _DEBUG
+
 	// ブロックの更新
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -524,6 +798,15 @@ void GameScene::PlayPhase() {
 
 void GameScene::DeashPhase() {
 	skydome_->Update();
+
+	for (Key* key : keys_) {
+		key->Update();
+	}
+
+	// 鍵ドアの更新[cite: 39]
+	for (KeyDoor* keyDoor : keyDoors_) {
+		keyDoor->Update();
+	}
 	for (Enemy* enemy : enemis_) {
 		enemy->Update();
 	}
@@ -549,6 +832,7 @@ void GameScene::DeashPhase() {
 		camera_.UpdateMatrix();
 	}
 #endif // _DEBUG
+
 	// ブロックの更新
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -616,7 +900,11 @@ void GameScene::ChangePhase() {
 		fade_->Update();
 		if (fade_->IsFinshed()) {
 
-			if (isRespawnFadeOut_) {
+			if (nextStageIndex_ >= 0) {
+				// ドアで指定された遷移先ステージへ移動[cite: 9]
+				stageManager_->SetCurrentStageIndex(nextStageIndex_);
+				reloadRequest_ = true; // シーン再読み込み（リロード）を要求[cite: 3, 9]
+			} else if (isRespawnFadeOut_) {
 				// 残機が残っている場合のやり直し（リロード要求を立てる）
 				reloadRequest_ = true;
 			} else if (isStageClear_) {
@@ -663,7 +951,6 @@ void GameScene::Initialize(StageManager* stageManager) {
 
 	// 3Dモデルの生成
 	playerModel_ = Model::CreateFromOBJ("player", true);
-	playerModelAttack_ = Model::CreateFromOBJ("hit_effect", true);
 	bulletModel_ = Model::CreateFromOBJ("bullet", true);
 	enemyModel_ = Model::CreateFromOBJ("enemy", true);
 	shieldEnemyModel_ = Model::CreateFromOBJ("shieldEnemy", true);
@@ -678,7 +965,13 @@ void GameScene::Initialize(StageManager* stageManager) {
 	hitEffectModel_ = Model::CreateFromOBJ("particle", true);
 	guardEffectModel_ = Model::CreateFromOBJ("ring", true);
 
-	// doorModel_ = Model::CreateFromOBJ("door", true);
+	doorModel_ = Model::CreateFromOBJ("door", true);
+
+	keyModel_ = Model::CreateFromOBJ("key", true);
+	keyDoorModel_ = Model::CreateFromOBJ("keyDoor", true);
+
+	buttonModel_ = Model::CreateFromOBJ("Switch", true); 
+	buttonDoorModel_ = Model::CreateFromOBJ("switchDoor", true);
 
 	// 天球の生成
 	skydome_ = new Skydome();
@@ -695,7 +988,7 @@ void GameScene::Initialize(StageManager* stageManager) {
 	// ステージファイルの読み込み
 	mapChipField_->LoadMapChipCsv(stageFilename);
 
-	signboardModel_ = Model::CreateFromOBJ("signboard", true);
+	//signboardModel_ = Model::CreateFromOBJ("signboard", true);
 
 	// 0〜9が横に並んだ数字画像などを読み込む
 	numberTextureHandle_ = TextureManager::Load("numbers/number.png");
@@ -731,7 +1024,7 @@ void GameScene::Initialize(StageManager* stageManager) {
 	PlayerCamera_->SetTarget(player_);
 	PlayerCamera_->Reset();
 
-	PlayerCamera_->SetMovebleArea(CamaraController::Rect{0, 100, 5, 100});
+	PlayerCamera_->SetMovebleArea(CamaraController::Rect{10, 500, 5, 10});
 
 	pauseScene_ = new PauseScene();
 	pauseScene_->Initialize();
@@ -771,19 +1064,19 @@ void GameScene::Update() {
 	camera_.TransferMatrix();
 
 	// 各看板の更新処理
-	bool isAnySignboardReading = false;
-	for (Signboard* signboard : signboards_) {
-		signboard->Update(player_);
-		// いずれかの看板が読まれているかチェック[cite: 37]
-		if (signboard->IsReading()) {
-			isAnySignboardReading = true;
-		}
-	}
+	//bool isAnySignboardReading = false;
+	//for (Signboard* signboard : signboards_) {
+	//	signboard->Update(player_);
+	//	// いずれかの看板が読まれているかチェック[cite: 37]
+	//	if (signboard->IsReading()) {
+	//		isAnySignboardReading = true;
+	//	}
+	//}
 
 	// 看板メッセージ表示中は、これ以降のゲーム更新処理を行わずにスキップする
-	if (isAnySignboardReading) {
-		return;
-	}
+	//if (isAnySignboardReading) {
+	//	return;
+	//}
 
 	// #ifdef _DEBUG
 	//	ImGuiManager::GetInstance()->Begin();
@@ -828,15 +1121,38 @@ void GameScene::Draw() {
 	Model::PreDraw();
 	skydome_->Draw();
 
+	for (Door* door : doors_) {
+		door->Draw(camera_);
+	}
+
+	for (Key* key : keys_) {
+		key->Draw();
+	}
+
+	// 鍵ドアの描画
+	for (KeyDoor* keyDoor : keyDoors_) {
+		keyDoor->Draw();
+	}
+
+	//  ボタンの描画
+	for (Button* button : buttons_) {
+		button->Draw();
+	}
+
+	//  ボタンドアの描画
+	for (ButtonDoor* buttonDoor : buttonDoors_) {
+		buttonDoor->Draw();
+	}
+
 	// 梯子の描画
 	for (Ladder* ladder : ladders_) {
 		ladder->Draw();
 	}
 
 	// 看板
-	for (Signboard* signboard : signboards_) {
-		signboard->Draw3D();
-	}
+	//for (Signboard* signboard : signboards_) {
+	//	signboard->Draw3D();
+	//}
 
 	for (std::vector<WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -873,7 +1189,6 @@ void GameScene::Draw() {
 	}
 	for (GuardEffect* guardEffect : guardEffects_) {
 		guardEffect->Draw();
-		;
 	}
 
 	Model::PostDraw();

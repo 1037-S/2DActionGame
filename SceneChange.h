@@ -1,7 +1,7 @@
 #pragma once
 #include "GameScene.h"
 #include "StageManager.h"
-//#include "StageSelect.h"
+#include "StageSelect.h"
 #include "TitleScene.h"
 #include <fstream>
 #include <sstream>
@@ -13,7 +13,7 @@ enum class Scene {
 	kUnknowm = 0,
 
 	kTitle,
-	//kStageSelect,
+	kStageSelect,
 	kGeme,
 };
 
@@ -30,6 +30,7 @@ public:
 
 private:
 	TitleScene* titleScene = nullptr;
+	StageSelect* stageSelect = nullptr;
 	GameScene* gameScene = nullptr;
 	StageManager* stageManager = nullptr;
 

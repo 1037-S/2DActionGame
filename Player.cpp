@@ -706,8 +706,8 @@ void Player::BehaviorKnockBackUpdate() {
 }
 
 void Player::DecreaseLife() {
-	if (life_ > 0) {
-		life_--;
+	if (kLife_ > 0) {
+		kLife_--;
 	}
 }
 
@@ -818,9 +818,6 @@ void Player::Draw() {
 		// 3Dモデルを描画する
 		playerModel_->Draw(worldTransform_, *camera_);
 
-		// 攻撃中に描画
-		if (behavior_ == Behavior::kAttack) {
-			playerModelAttack_->Draw(worldTransformAttack_, *camera_);
-		}
+		
 	}
 }

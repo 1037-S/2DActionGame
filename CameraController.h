@@ -42,10 +42,10 @@ private:
 	Player* target_ = nullptr;
 
 	// 追従対象とカメラの座標の差(オフセット)
-	KamataEngine::Vector3 targetOffset_ = {0, 0, -15.0f};
+	KamataEngine::Vector3 targetOffset_ = {0, 0, -13.0f};
 
 	// 追従対象の各方向へのカメラの移動範囲
-	static inline const Rect margin_ = {-10, 10, -10, 10};
+	static inline const Rect margin_ = {-5, 5, -5, 5};
 
 	// 座標補間割合
 	static inline const float kInterpolationRate_ = 0.1f;
